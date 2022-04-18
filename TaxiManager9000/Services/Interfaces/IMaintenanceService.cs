@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Services.Interfaces
 {
-    public interface ICarService
+    public interface IMaintenanceService
     {
         double ReturnPercent(Car car);
         void ListVehicles();

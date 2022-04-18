@@ -3,11 +3,11 @@ using Models;
 using Services;
 
 UserService userService = new UserService();
-DriverService driverService = new DriverService();
-CarService carService = new CarService();
+ManagerService managerService = new ManagerService();
+MaintenanceService maintenanceService = new MaintenanceService();
 
-driverService.AssignCarsToDrivers();
-carService.AssignedDrivers();
+managerService.AssignCarsToDrivers();
+maintenanceService.AssignedDrivers();
 Console.WriteLine("Taxi Manager 9000");
 User user = userService.Login();
 while (true)
@@ -71,13 +71,13 @@ while (true)
     }
     else if (user.Role == Role.Maintenance)
     {
-        Console.WriteLine("1.See vehicles \n2.See License Plate Status \n3.Exit", HelperMethods.ChangeColor(ConsoleColor.White));
+        Console.WriteLine("1.See vehicles \n2.See License Plate Status \n3.Change your password \n4.Exit", HelperMethods.ChangeColor(ConsoleColor.White));
         int answer = HelperMethods.Parsing(Console.ReadLine());
         if (answer == 1)
         {
             Console.Clear();
             Console.WriteLine("Vehicles:");
-            carService.ListVehicles();
+            maintenanceService.ListVehicles();
             Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
             Console.ReadLine();
             Console.Clear();
@@ -86,13 +86,21 @@ while (true)
         else if (answer == 2)
         {
             Console.Clear();
-            carService.ListLicenseStatus();
+            maintenanceService.ListLicenseStatus();
+            Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
+            Console.ReadLine();
+            Console.Clear();
+            continue;
+        } else if (answer == 3)
+        {
+            Console.Clear();
+            userService.ChangePassword(user);
             Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
             Console.ReadLine();
             Console.Clear();
             continue;
         }
-        else if (answer == 3)
+        else if (answer == 4)
         {
             Console.Clear();
             Console.WriteLine("Goodbye!");
@@ -106,12 +114,12 @@ while (true)
     }
     else if (user.Role == Role.Manager)
     {
-        Console.WriteLine("1.See all drivers \n2.See Taxi License Status \n3.Driver Manager \n4.Exit", HelperMethods.ChangeColor(ConsoleColor.White));
+        Console.WriteLine("1.See all drivers \n2.See Taxi License Status \n3.Driver Manager \n4.Change your password \n5.Exit", HelperMethods.ChangeColor(ConsoleColor.White));
         int answer = HelperMethods.Parsing(Console.ReadLine());
         if (answer == 1)
         {
             Console.Clear();
-            driverService.ListAllDrivers();
+            managerService.ListAllDrivers();
             Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
             Console.ReadLine();
             Console.Clear();
@@ -120,13 +128,22 @@ while (true)
         else if (answer == 2)
         {
             Console.Clear();
-            driverService.PrintTaxiLicenseStatus();
+            managerService.PrintTaxiLicenseStatus();
+            Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
+            Console.ReadLine();
+            Console.Clear();
+            continue;
+        } 
+        else if (answer == 4)
+        {
+            Console.Clear();
+            userService.ChangePassword(user);
             Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
             Console.ReadLine();
             Console.Clear();
             continue;
         }
-        else if (answer == 4)
+        else if (answer == 5)
         {
             Console.Clear();
             Console.WriteLine("Goodbye!");

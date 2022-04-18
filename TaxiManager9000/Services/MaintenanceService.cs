@@ -3,7 +3,7 @@ using Services.Interfaces;
 
 namespace Services
 {
-    public class CarService : ICarService
+    public class MaintenanceService : IMaintenanceService
     {
 
         //every car's own list of assigned drivers by ID

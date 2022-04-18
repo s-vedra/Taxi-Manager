@@ -21,8 +21,7 @@ namespace Services
         {
             entities.ForEach(entity => Console.WriteLine(entity.PrintInfo(), HelperMethods.ChangeColor(ConsoleColor.White)));
         }
-
-        
+  
         public static T ReturnEntity(int index, List<T> entities)
         {
             foreach (T item in entities)
