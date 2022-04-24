@@ -25,6 +25,11 @@ namespace Models
             new Driver(10, "Rona", "Ronsky", Shift.Afternoon,  "POTD5R", new DateTime(2023, 9, 20)),
             new Driver(11, "Dex", "Dexsky", Shift.Evening,  "BBBC3E", new DateTime(2021, 12, 5)),
             new Driver(12, "Wayne", "Waynsky", Shift.Evening,  "LLLP6M", new DateTime(2022, 2, 6)),
+            new Driver(13, "Gwen", "Ten", Shift.NotAssigned, "DDMD4P", new DateTime(2024, 6, 19)),
+            new Driver(14,"Emerson", "Rollins", Shift.NotAssigned,  "PPLD5E", new DateTime(2023, 2, 1)),
+            new Driver(15, "Amelia", "Moody", Shift.NotAssigned,  "PORD5R", new DateTime(2023, 5, 21)),
+            new Driver(16, "Emilie", "Horn", Shift.NotAssigned,  "BLBC3E", new DateTime(2021, 8, 6)),
+            new Driver(17, "Nathen", "Higgins", Shift.NotAssigned,  "LLLA6M", new DateTime(2022, 12, 5)),
         };
 
         public static List<Car> cars = new List<Car>()

@@ -1,5 +1,6 @@
 ﻿using Enums;
 using Models.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace Models
 {
@@ -46,7 +47,12 @@ namespace Models
         }
         public override string PrintInfo()
         {
-            return $"{FirstName} {LastName} Shift: {Shift} Car: {Car.Model}";
+            if (Car == null)
+            {
+                return $"{Id} {FirstName} {LastName} Shift: {Regex.Replace(Shift.ToString(), "(?<=[a-z])([A-Z])", " $1", RegexOptions.Compiled)} Car: No assigned Car";
+            }
+        
+            return $"{Id} {FirstName} {LastName} Shift: {Shift} Car: {Car.Model}";
         }
         public string PrintLicenseStatus()
         {

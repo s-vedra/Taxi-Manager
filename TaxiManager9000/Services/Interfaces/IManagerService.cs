@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,8 @@ namespace Services.Interfaces
         void AssignCarsToDrivers();
         void ListAllDrivers();
         void PrintTaxiLicenseStatus();
+        void UnassignDriver();
+        void AssignDriver();
+        
     }
 }

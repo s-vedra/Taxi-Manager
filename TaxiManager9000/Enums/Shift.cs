@@ -10,6 +10,7 @@ namespace Enums
     {
         Morning = 1,
         Afternoon,
-        Evening
+        Evening,
+        NotAssigned
     }
 }
