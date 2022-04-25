@@ -141,8 +141,10 @@ while (true)
                             Console.ReadLine();
                             Console.Clear();
                             continue;
+                        default:
+                            Console.WriteLine("Please choose 1-2", HelperMethods.ChangeColor(ConsoleColor.Red));
+                            continue;
                     }
-                    continue;
                 case 4:
                     Console.Clear();
                     userService.ChangePassword(user);

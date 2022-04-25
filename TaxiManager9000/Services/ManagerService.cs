@@ -39,104 +39,63 @@ namespace Services
             Console.WriteLine("Assigned Drivers:");
             List<Driver> assignedDrivers = EntitiesDB.drivers.Where(driver => driver.Shift != Shift.NotAssigned).ToList();
             DBServices<Driver>.PrintEntities(assignedDrivers);
-            while (true)
-            {
-                Console.WriteLine("Enter Driver's ID");
-                int id = HelperMethods.Parsing(Console.ReadLine());
-                Driver driver = DBServices<Driver>.ReturnEntity(id, assignedDrivers);
-                if (driver == null || id > assignedDrivers.Count)
-                {
-                    Console.WriteLine("Wrong input, please try again");
-                    continue;
-                }
-                else
-                {
-                    driver.Shift = Shift.NotAssigned;
-                    driver.Car = null;
-                    Console.WriteLine($"{driver.PrintInfo()}");
-                    break;
-                }
-            }
-           
+            Driver driver = DBServices<Driver>.HandleException(assignedDrivers);
+            driver.Shift = Shift.NotAssigned;
+            driver.Car = null;
+            Console.Clear();
+            Console.WriteLine($"{driver.PrintInfo()}");
         }
-        
+
         public void AssignDriver()
         {
             Console.WriteLine("Unassigned Drivers:");
             List<Driver> unassignedDrivers = EntitiesDB.drivers.Where(driver => driver.Shift == Shift.NotAssigned).ToList();
             DBServices<Driver>.PrintEntities(unassignedDrivers);
+            Driver driver = DBServices<Driver>.HandleException(unassignedDrivers);
+            Console.Clear();
             while (true)
             {
-                Console.WriteLine("Enter driver's ID");
-                int id = HelperMethods.Parsing(Console.ReadLine());
-                Driver driver = DBServices<Driver>.ReturnEntity(id, unassignedDrivers);
-                if (driver == null || id > EntitiesDB.drivers.Count)
+                try
                 {
-                    Console.WriteLine("Wrong input, please try again");
-                    continue;
-                }
-                else
-                {
-                    Console.Clear();
-                    while (true)
+                    Console.WriteLine("Enter shift: \n1.Morning \n2.Afternoon \n3.Evening");
+                    int shiftInput = HelperMethods.Parsing(Console.ReadLine());
+                    if (shiftInput > 3 || shiftInput == 0)
                     {
-                        Console.WriteLine("Enter shift: \n1.Morning \n2.Afternoon \n3.Evening");
-                        int shiftInput = HelperMethods.Parsing(Console.ReadLine());
-                        if (shiftInput > 3 || shiftInput == 0)
+                        //uste ova da se sredi!!
+                        throw new Exception("Please choose 1-3");
+                    }
+                    else
+                    {
+                        Shift shift = (Shift)shiftInput;
+
+                        //get the assigned cars first and then create a list for all the cars that aren't in the first list
+                        List<Car> assignedCars = EntitiesDB.cars.Where(car => car.AssignedDrivers.Where(driver => driver.Shift == shift).ToList().Count > 0).ToList();
+                        List<Car> availableCars = EntitiesDB.cars.Except(assignedCars).ToList();
+
+                        driver.Shift = shift;
+                        Console.Clear();
+                        Console.WriteLine($"Available cars for {shift} shift");
+                        foreach (Car car in availableCars)
                         {
-                            Console.WriteLine("Please choose 1-3");
-                            continue;
-                        }
-                        else
-                        {
-                            Shift shift = (Shift)shiftInput;
-
-                            //get the assigned cars first and then create a list for all the cars that aren't in the first list
-                            List<Car> assignedCars = EntitiesDB.cars.Where(car => car.AssignedDrivers.Where(driver => driver.Shift == shift).ToList().Count > 0).ToList();
-                            List<Car> availableCars = EntitiesDB.cars.Except(assignedCars).ToList();
-
-                            driver.Shift = shift;
-                            Console.Clear();
-                            Console.WriteLine($"Available cars for {shift} shift");
-                            foreach (Car car in availableCars)
+                            if (car.ReturnLicense() != "Expired")
                             {
-                                if (car.ReturnLicense() != "Expired")
-                                {
-                                    Console.WriteLine(car.PrintInfo(), HelperMethods.ChangeColor(ConsoleColor.White));
-                                }
+                                Console.WriteLine(car.PrintInfo(), HelperMethods.ChangeColor(ConsoleColor.White));
                             }
-                            while (true)
-                            {
-                                Console.WriteLine("Enter car ID");
-                                int carId = HelperMethods.Parsing(Console.ReadLine());
-                                Car chosenCar = DBServices<Car>.ReturnEntity(carId, availableCars);
-                                if (chosenCar == null)
-                                {
-                                    Console.WriteLine("No car found");
-                                    continue;
-                                }
-                                else
-                                {
-                                    Console.Clear();
-                                    driver.Car = chosenCar;
-                                    Console.WriteLine(driver.PrintInfo());
-                                    break;
-
-                                }
-
-                            }
-
                         }
-                        break;
-
+                        Car chosenCar = DBServices<Car>.HandleException(availableCars);
+                        Console.Clear();
+                        driver.Car = chosenCar;
+                        Console.WriteLine(driver.PrintInfo());
                     }
 
-                    break;
                 }
-
-
+                catch (Exception msg)
+                {
+                    Console.WriteLine(msg.Message);
+                    continue;
+                }
+                break;
             }
-
 
         }
     }

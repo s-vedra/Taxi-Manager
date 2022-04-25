@@ -59,18 +59,11 @@ namespace Services
 
         public void ListVehicles()
         {
-            foreach (Car car in EntitiesDB.cars)
-            {
-                Console.WriteLine($"{car.PrintInfo()} covers {ReturnPercent(car)}% of shifts", HelperMethods.ChangeColor(ConsoleColor.White));
-
-            }
+            EntitiesDB.cars.ForEach(car => Console.WriteLine($"{car.PrintInfo()} covers {ReturnPercent(car)}% of shifts", HelperMethods.ChangeColor(ConsoleColor.White)));
         }
         public void ListLicenseStatus()
         {
-            foreach (Car car in EntitiesDB.cars)
-            {
-                Console.WriteLine(car.PrintLicenseStatus());
-            }
+            EntitiesDB.cars.ForEach(car => Console.WriteLine(car.PrintLicenseStatus()));
         }
     }
 }

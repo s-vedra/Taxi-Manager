@@ -33,5 +33,32 @@ namespace Services
             }
             return null;
         }
+
+        public static T HandleException(List<T> entities)
+        {
+            while (true)
+            {
+                Console.WriteLine("Enter ID");
+                int id = HelperMethods.Parsing(Console.ReadLine());
+                T entity = DBServices<T>.ReturnEntity(id, entities);
+                try
+                {
+                    if (entity == null)
+                    {
+                        throw new NullReferenceException("Nothing found");
+                    }
+                    else
+                    {
+                        return entity;
+                    }
+
+                }
+                catch (NullReferenceException msg)
+                {
+                    Console.WriteLine(msg.Message);
+                    continue;
+                }
+            }
+        }
     }
 }
