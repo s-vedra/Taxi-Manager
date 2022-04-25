@@ -61,7 +61,6 @@ namespace Services
                     int shiftInput = HelperMethods.Parsing(Console.ReadLine());
                     if (shiftInput > 3 || shiftInput == 0)
                     {
-                        //uste ova da se sredi!!
                         throw new Exception("Please choose 1-3");
                     }
                     else
