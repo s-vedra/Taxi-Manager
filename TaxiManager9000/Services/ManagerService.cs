@@ -74,13 +74,11 @@ namespace Services
                         driver.Shift = shift;
                         Console.Clear();
                         Console.WriteLine($"Available cars for {shift} shift");
-                        foreach (Car car in availableCars)
-                        {
-                            if (car.ReturnLicense() != "Expired")
-                            {
-                                Console.WriteLine(car.PrintInfo(), HelperMethods.ChangeColor(ConsoleColor.White));
-                            }
-                        }
+
+                        //list available cars
+                        availableCars.Where(car => car.ReturnLicense() != "Expired").ToList()
+                        .ForEach(car => Console.WriteLine(car.PrintInfo(), HelperMethods.ChangeColor(ConsoleColor.White))); 
+
                         Car chosenCar = DBServices<Car>.HandleException(availableCars);
                         Console.Clear();
                         driver.Car = chosenCar;
