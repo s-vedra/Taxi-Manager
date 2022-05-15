@@ -9,7 +9,6 @@ namespace Models.Interfaces
     public interface IUser
     {
         bool CheckPassword(string password);
-        bool CheckUsername(string username);
         bool ChangePassword(string password);
     }
 }

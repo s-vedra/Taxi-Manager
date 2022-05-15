@@ -41,5 +41,19 @@ namespace Models
            new Car(5, "Mazda 6", "555DE1", new DateTime(2021, 12, 15)),
            new Car(6, "Opel Corsa", "333CA2", new DateTime(2022, 6, 17)),
         };
+
+        public static List<Shift> shifts = new List<Shift>()
+        {
+            Shift.Morning,
+            Shift.Afternoon,
+            Shift.Evening
+        };
+
+        public static List<Role> roles = new List<Role>()
+        {
+            Role.Administrator,
+            Role.Manager,
+            Role.Maintenance
+        };
     }
 }

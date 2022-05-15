@@ -9,6 +9,7 @@ namespace Services
 {
     public static class  DBServices<T> where T : BaseEntity
     {
+        public delegate void PrintMultipleEntities(List<T> entities);
         public static void Add(List <T> entities, T entity)
         {
             entities.Add(entity);
@@ -17,48 +18,44 @@ namespace Services
         {
             entities.Remove(entity);
         }
-        public static void PrintEntities(List<T> entities)
+        public static void PrintEntity(T entity)
         {
-            entities.ForEach(entity => Console.WriteLine(entity.PrintInfo(), HelperMethods.ChangeColor(ConsoleColor.White)));
+            Console.WriteLine(entity.PrintInfo());
+        }
+        public static void PrintEntities(List<T> entities, PrintMultipleEntities printMultiple)
+        {
+            printMultiple(entities);
         }
   
-        public static T ReturnEntity(int index, List<T> entities)
-        {
-            foreach (T item in entities)
-            {
-                if (item.Id == index)
-                {
-                    return item;
-                }
-            }
-            return null;
-        }
-
-        public static T HandleException(List<T> entities)
+        public static T ReturnEntity(List<T> entities)
         {
             while (true)
             {
-                Console.WriteLine("Enter ID");
-                int id = HelperMethods.Parsing(Console.ReadLine());
-                T entity = DBServices<T>.ReturnEntity(id, entities);
                 try
                 {
-                    if (entity == null)
-                    {
-                        throw new NullReferenceException("Nothing found");
-                    }
-                    else
+                    Console.WriteLine("Enter ID: ");
+                    int index = Console.ReadLine().Parsing();
+                    T? entity = entities.SingleOrDefault(entity => entity.Id == index);
+                    if (entity != null)
                     {
                         return entity;
                     }
-
+                    else
+                    {
+                        throw new ExceptionService("User entered invalid message type");
+                    }
                 }
-                catch (NullReferenceException msg)
+                catch (ExceptionService)
                 {
-                    Console.WriteLine(msg.Message);
+                    Console.WriteLine("Nothing found");
                     continue;
                 }
             }
+        }
+
+        public static T? AssignEntity(int id, List<T> entities)
+        {
+           return entities.SingleOrDefault(entity => entity.Id == id);
         }
     }
 }

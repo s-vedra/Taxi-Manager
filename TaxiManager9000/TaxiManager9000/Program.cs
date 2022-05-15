@@ -1,10 +1,11 @@
 ﻿using Enums;
 using Models;
 using Services;
+using Services.Interfaces;
 
-UserService userService = new UserService();
-ManagerService managerService = new ManagerService();
-MaintenanceService maintenanceService = new MaintenanceService();
+IUserService userService = new UserService();
+IManagerService managerService = new ManagerService();
+IMaintenanceService maintenanceService = new MaintenanceService();
 
 managerService.AssignCarsToDrivers();
 maintenanceService.AssignedDrivers();
@@ -21,39 +22,20 @@ while (true)
             switch (answerAdmin)
             {
                 case 1:
-
                     Console.Clear();
-                    userService.AddNewUser();
-                    Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
-                    Console.ReadLine();
-                    Console.Clear();
+                    userService.AddNewUser(HelperMethods.CountCharPassword, HelperMethods.CountCharUsername);
+                    HelperMethods.MainMenu();
                     continue;
                 case 2:
                     Console.Clear();
-                    userService.PrintUsers();
-                    User userToRemove = userService.RemoveUser();
-                    if (user.CheckID(userToRemove))
-                    {
-                        Console.WriteLine("You can't do that!");
-                        continue;
-                    }
-                    else
-                    {
                         Console.Clear();
-                        DBServices<User>.Remove(EntitiesDB.users, userToRemove);
-                        Console.WriteLine($"{userToRemove.Username} successfully removed", HelperMethods.ChangeColor(ConsoleColor.Green));
-                        userService.PrintUsers();
-                        Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
-                        Console.ReadLine();
-                        Console.Clear();
-                        continue;
-                    }
+                        userService.RemoveUser(user.Id);
+                    HelperMethods.MainMenu();
+                    continue;
                 case 3:
                     Console.Clear();
                     userService.ChangePassword(user);
-                    Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
-                    Console.ReadLine();
-                    Console.Clear();
+                    HelperMethods.MainMenu();
                     continue;
                 case 4:
                     Console.Clear();
@@ -73,25 +55,18 @@ while (true)
             {
                 case 1:
                     Console.Clear();
-                    Console.WriteLine("Vehicles:");
-                    maintenanceService.ListVehicles();
-                    Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
-                    Console.ReadLine();
-                    Console.Clear();
+                    maintenanceService.ListVehicles(EntitiesDB.cars);
+                    HelperMethods.MainMenu();
                     continue;
                 case 2:
                     Console.Clear();
-                    maintenanceService.ListLicenseStatus();
-                    Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
-                    Console.ReadLine();
-                    Console.Clear();
+                    maintenanceService.ListLicenseStatus(EntitiesDB.cars);
+                    HelperMethods.MainMenu();
                     continue;
                 case 3:
                     Console.Clear();
                     userService.ChangePassword(user);
-                    Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
-                    Console.ReadLine();
-                    Console.Clear();
+                    HelperMethods.MainMenu();
                     continue;
                 case 4:
                     Console.Clear();
@@ -109,17 +84,13 @@ while (true)
             {
                 case 1:
                     Console.Clear();
-                    managerService.ListAllDrivers();
-                    Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
-                    Console.ReadLine();
-                    Console.Clear();
+                    managerService.ListAllDrivers(EntitiesDB.drivers);
+                    HelperMethods.MainMenu();
                     continue;
                 case 2:
                     Console.Clear();
                     managerService.PrintTaxiLicenseStatus();
-                    Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
-                    Console.ReadLine();
-                    Console.Clear();
+                    HelperMethods.MainMenu();
                     continue;
                 case 3:
                     Console.Clear();
@@ -130,16 +101,12 @@ while (true)
                         case 1:
                             Console.Clear();
                             managerService.AssignDriver();
-                            Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
-                            Console.ReadLine();
-                            Console.Clear();
+                            HelperMethods.MainMenu();
                             continue;
                         case 2:
                             Console.Clear();
                             managerService.UnassignDriver();
-                            Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
-                            Console.ReadLine();
-                            Console.Clear();
+                            HelperMethods.MainMenu();
                             continue;
                         default:
                             Console.WriteLine("Please choose 1-2", HelperMethods.ChangeColor(ConsoleColor.Red));
@@ -148,9 +115,7 @@ while (true)
                 case 4:
                     Console.Clear();
                     userService.ChangePassword(user);
-                    Console.WriteLine("Press enter to go back to Main Menu", HelperMethods.ChangeColor(ConsoleColor.Magenta));
-                    Console.ReadLine();
-                    Console.Clear();
+                    HelperMethods.MainMenu();
                     continue;
                 case 5:
                     Console.Clear();

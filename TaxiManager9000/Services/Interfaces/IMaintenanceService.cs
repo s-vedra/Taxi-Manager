@@ -10,8 +10,8 @@ namespace Services.Interfaces
     public interface IMaintenanceService
     {
         double ReturnPercent(Car car);
-        void ListVehicles();
+        void ListVehicles(List<Car> cars);
         void AssignedDrivers();
-        void ListLicenseStatus();
+        void ListLicenseStatus(List<Car> cars);
     }
 }

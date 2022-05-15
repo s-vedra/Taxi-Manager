@@ -6,52 +6,27 @@ namespace Services
 {
     public class UserService : IUserService
     {
-        public void AddNewUser()
-        {
-            while (true)
-            {
-                try
-                {
-                    Console.WriteLine("Enter username");
-                    string username = Console.ReadLine();
-                    if (!HelperMethods.CountCharUsername(username))
-                    {
-                        throw new Exception("Username must contain atleats 5 characters");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Enter password");
-                        string password = Console.ReadLine();
-                        if (HelperMethods.CountCharPassword(password))
-                        {
-                            Console.WriteLine("Choose role \n1.Admin \n2.Manager \n3.Maintenance");
-                            int userRole = HelperMethods.Parsing(Console.ReadLine());
-                            if (userRole > 3 || userRole == 0)
-                            {
-                                throw new Exception("Please choose 1-3");
-                            }
-                            else
-                            {
-                                Role role = (Role)userRole;
-                                User newUser = new User(HelperMethods.ReturnId(EntitiesDB.users), username, password, role);
-                                DBServices<User>.Add(EntitiesDB.users, newUser);
-                                Console.WriteLine($"Successful creation of {newUser.Role} user!", HelperMethods.ChangeColor(ConsoleColor.Green));
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            throw new Exception("Password must contain atleats 5 characters and a number");
-                        }
-                    }
-                }
-                catch (Exception msg)
-                {
-                    Console.WriteLine(msg.Message);
-                    continue;
-                }
+        public delegate string ReturnUsername();
+        public delegate string ReturnPassword();
 
-            }
+        public static Role ReturnRole()
+        {
+            Console.Clear();
+            Console.WriteLine("Choose role: ");
+            return (Role)HelperMethods.ReturnEnum(EntitiesDB.roles);
+        }
+        public void AddNewUser(ReturnPassword returnPassword, ReturnUsername returnUsername)
+        {
+             
+            string username = returnUsername();
+            string? password = returnPassword();
+
+            Role role = ReturnRole();
+            int id = HelperMethods.ReturnId(EntitiesDB.users);
+               
+            User newUser = new User(id, username, password, role);
+            DBServices<User>.Add(EntitiesDB.users, newUser);
+            Console.WriteLine($"Successful creation of {newUser.Role} user!", HelperMethods.ChangeColor(ConsoleColor.Green));
 
         }
 
@@ -62,13 +37,13 @@ namespace Services
                 try
                 {
                     Console.WriteLine("Enter username", HelperMethods.ChangeColor(ConsoleColor.White));
-                    string username = Console.ReadLine();
+                    string? username = Console.ReadLine();
                     Console.WriteLine("Enter password");
-                    string password = Console.ReadLine();
-                    User user = EntitiesDB.users.SingleOrDefault(user => user.CheckUsername(username) && user.CheckPassword(password));
+                    string? password = Console.ReadLine();
+                    User? user = EntitiesDB.users.SingleOrDefault(user => user.Username == username && user.CheckPassword(password));
                     if (user == null)
                     {
-                        throw new Exception("Login unsuccessful. Please try again");
+                        throw new ExceptionService($"User entered wrong username or password. Entered message: username - {username}, password - {password}");
                     }
                     else
                     {
@@ -77,37 +52,38 @@ namespace Services
                         return user;
                     }
                 }
-                catch (Exception msg)
+                catch (Exception)
                 {
-                    Console.WriteLine(msg.Message, HelperMethods.ChangeColor(ConsoleColor.Red));
+                    Console.WriteLine("Login unsuccessful. Please try again", HelperMethods.ChangeColor(ConsoleColor.Red));
                     continue;
                 }
             }
 
         }
 
-        public User RemoveUser()
+        public void RemoveUser(int id)
         {
             while (true)
             {
                 try
                 {
-                    Console.WriteLine("Enter id:");
-                    int id = HelperMethods.Parsing(Console.ReadLine());
-                    User user = EntitiesDB.users.SingleOrDefault(user => user.Id == id);
-                    if (user == null)
+                    PrintUsers(EntitiesDB.users);
+                    User user = DBServices<User>.ReturnEntity(EntitiesDB.users);
+                    if (user.Id == id)
                     {
-                        throw new Exception("No user found, try again");
+                        throw new ExceptionService("User entered invalid Id");
                     }
                     else
                     {
-
-                        return user;
+                        DBServices<User>.Remove(EntitiesDB.users, user);
+                        Console.WriteLine($"{user.Username} successfully removed", HelperMethods.ChangeColor(ConsoleColor.Green));
+                        PrintUsers(EntitiesDB.users);
                     }
+                    break;
                 }
-                catch (Exception msg)
+                catch (ExceptionService)
                 {
-                    Console.WriteLine(msg.Message);
+                    Console.WriteLine("You can't do that!");
                     continue;
                 }
             }
@@ -121,7 +97,7 @@ namespace Services
                 Console.WriteLine("Enter new password:", HelperMethods.ChangeColor(ConsoleColor.White));
                 if (user.ChangePassword(Console.ReadLine()))
                 {
-                    Console.WriteLine("Successful change password!", HelperMethods.ChangeColor(ConsoleColor.Green));
+                    Console.WriteLine("Successfuly changed password!", HelperMethods.ChangeColor(ConsoleColor.Green));
                     break;
                 }
                 else
@@ -133,9 +109,9 @@ namespace Services
 
         }
 
-        public void PrintUsers()
+        public static void PrintUsers(List<User> users)
         {
-            DBServices<User>.PrintEntities(EntitiesDB.users);
+            DBServices<User>.PrintEntities(users, (users) => users.ForEach(user => Console.WriteLine(user.PrintInfo(), HelperMethods.ChangeColor(ConsoleColor.White))));
         }
     }
 }

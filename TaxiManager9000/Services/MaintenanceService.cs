@@ -9,35 +9,35 @@ namespace Services
         //every car's own list of assigned drivers by ID
         public void AssignedDrivers()
         {
-            DBServices<Car>.ReturnEntity(1, EntitiesDB.cars).AssignedDrivers = new List<Driver>()
+            DBServices<Car>.AssignEntity(1, EntitiesDB.cars).AssignedDrivers = new List<Driver>()
             {
-              DBServices<Driver>.ReturnEntity(1, EntitiesDB.drivers),
-              DBServices<Driver>.ReturnEntity(2, EntitiesDB.drivers),
-              DBServices<Driver>.ReturnEntity(11, EntitiesDB.drivers)
+              DBServices<Driver>.AssignEntity(1, EntitiesDB.drivers),
+              DBServices<Driver>.AssignEntity(2, EntitiesDB.drivers),
+              DBServices<Driver>.AssignEntity(11, EntitiesDB.drivers)
             };
-            DBServices<Car>.ReturnEntity(2, EntitiesDB.cars).AssignedDrivers = new List<Driver>()
+            DBServices<Car>.AssignEntity(2, EntitiesDB.cars).AssignedDrivers = new List<Driver>()
             {
-              DBServices<Driver>.ReturnEntity(3, EntitiesDB.drivers),
-              DBServices<Driver>.ReturnEntity(6, EntitiesDB.drivers),
+              DBServices<Driver>.AssignEntity(3, EntitiesDB.drivers),
+              DBServices<Driver>.AssignEntity(6, EntitiesDB.drivers),
             };
-            DBServices<Car>.ReturnEntity(3, EntitiesDB.cars).AssignedDrivers = new List<Driver>()
+            DBServices<Car>.AssignEntity(3, EntitiesDB.cars).AssignedDrivers = new List<Driver>()
             {
-              DBServices<Driver>.ReturnEntity(4, EntitiesDB.drivers),
-              DBServices<Driver>.ReturnEntity(5, EntitiesDB.drivers),
-              DBServices<Driver>.ReturnEntity(8, EntitiesDB.drivers)
+              DBServices<Driver>.AssignEntity(4, EntitiesDB.drivers),
+              DBServices<Driver>.AssignEntity(5, EntitiesDB.drivers),
+              DBServices<Driver>.AssignEntity(8, EntitiesDB.drivers)
             };
-            DBServices<Car>.ReturnEntity(4, EntitiesDB.cars).AssignedDrivers = new List<Driver>()
+            DBServices<Car>.AssignEntity(4, EntitiesDB.cars).AssignedDrivers = new List<Driver>()
             {
-              DBServices<Driver>.ReturnEntity(12, EntitiesDB.drivers),
+              DBServices<Driver>.AssignEntity(12, EntitiesDB.drivers),
             };
-            DBServices<Car>.ReturnEntity(5, EntitiesDB.cars).AssignedDrivers = new List<Driver>()
+            DBServices<Car>.AssignEntity(5, EntitiesDB.cars).AssignedDrivers = new List<Driver>()
             {
-              DBServices<Driver>.ReturnEntity(7, EntitiesDB.drivers),
-              DBServices<Driver>.ReturnEntity(9, EntitiesDB.drivers),
+              DBServices<Driver>.AssignEntity(7, EntitiesDB.drivers),
+              DBServices<Driver>.AssignEntity(9, EntitiesDB.drivers),
             };
-            DBServices<Car>.ReturnEntity(6, EntitiesDB.cars).AssignedDrivers = new List<Driver>()
+            DBServices<Car>.AssignEntity(6, EntitiesDB.cars).AssignedDrivers = new List<Driver>()
             {
-              DBServices<Driver>.ReturnEntity(10, EntitiesDB.drivers),
+              DBServices<Driver>.AssignEntity(10, EntitiesDB.drivers),
             };
         }
 
@@ -47,23 +47,23 @@ namespace Services
             double count = 0;
             foreach (Driver driver in EntitiesDB.drivers)
             {
-
                 if (driver.Car == car)
                 {
                     count++;
                 }
-
             }
             return Math.Round((count / 3) * 100, 0);
         }
 
-        public void ListVehicles()
+        public void ListVehicles(List<Car> cars)
         {
-            EntitiesDB.cars.ForEach(car => Console.WriteLine($"{car.PrintInfo()} covers {ReturnPercent(car)}% of shifts", HelperMethods.ChangeColor(ConsoleColor.White)));
+            Console.WriteLine("Vehicles:");
+            DBServices<Car>.PrintEntities(cars, (cars) => 
+            cars.ForEach(car => Console.WriteLine($"{car.PrintInfo()} covers {ReturnPercent(car)}% of shifts", HelperMethods.ChangeColor(ConsoleColor.White))));
         }
-        public void ListLicenseStatus()
+        public void ListLicenseStatus(List<Car> cars)
         {
-            EntitiesDB.cars.ForEach(car => Console.WriteLine(car.PrintLicenseStatus()));
+            DBServices<Car>.PrintEntities(cars,(cars) => cars.ForEach(car => Console.WriteLine(car.PrintLicenseStatus())));
         }
     }
 }
