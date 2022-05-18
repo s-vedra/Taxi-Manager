@@ -10,7 +10,7 @@ namespace Services
     public class LoggingService : ILoggingService
     {
         private string _errorFolderPath = @"..\..\..\Errors";
-        private string _errorFilePath = @"\text.txt";
+        private string _errorFilePath = $@"\logs{DateTime.Today.Date.ToString("dd-MM-yyyy")}.log";
         public LoggingService()
         {
             if (!Directory.Exists(_errorFolderPath))

@@ -1,16 +1,11 @@
 ﻿using Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services
 {
-    public static class  DBServices<T> where T : BaseEntity
+    public static class DBServices<T> where T : BaseEntity
     {
         public delegate void PrintMultipleEntities(List<T> entities);
-        public static void Add(List <T> entities, T entity)
+        public static void Add(List<T> entities, T entity)
         {
             entities.Add(entity);
         }
@@ -26,36 +21,41 @@ namespace Services
         {
             printMultiple(entities);
         }
-  
-        public static T ReturnEntity(List<T> entities)
+
+        public static T ReturnEntityById(List<T> entities)
         {
-            while (true)
+            Console.WriteLine("Enter ID: ");
+            int? index = Console.ReadLine().Parsing();
+            T? entity = entities.SingleOrDefault(entity => entity.Id == index);
+            if (entity != null)
             {
-                try
-                {
-                    Console.WriteLine("Enter ID: ");
-                    int index = Console.ReadLine().Parsing();
-                    T? entity = entities.SingleOrDefault(entity => entity.Id == index);
-                    if (entity != null)
-                    {
-                        return entity;
-                    }
-                    else
-                    {
-                        throw new ExceptionService("User entered invalid message type");
-                    }
-                }
-                catch (ExceptionService)
-                {
-                    Console.WriteLine("Nothing found");
-                    continue;
-                }
+                return entity;
+            }
+            else
+            {
+                throw new ExceptionService("No user found");
             }
         }
 
+        public static User ReturnUser()
+        {
+            Console.WriteLine("Enter username: ");
+            string? username = Console.ReadLine();
+            Console.WriteLine("Enter password: ");
+            string? password = Console.ReadLine();
+            User? user = EntitiesDB.users.SingleOrDefault(user => user.Username == username && user.CheckPassword(password));
+            if (user == null)
+            {
+                throw new ExceptionService($"Login unsuccessful. Please try again");
+            }
+            else
+            {
+                return user;
+            }
+        }
         public static T? AssignEntity(int id, List<T> entities)
         {
-           return entities.SingleOrDefault(entity => entity.Id == id);
+            return entities.SingleOrDefault(entity => entity.Id == id);
         }
     }
 }

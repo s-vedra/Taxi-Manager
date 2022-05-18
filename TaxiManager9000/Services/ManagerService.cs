@@ -40,7 +40,7 @@ namespace Services
             Console.WriteLine("Assigned Drivers:");
             List<Driver> assignedDrivers = EntitiesDB.drivers.Where(driver => driver.Shift != Shift.NotAssigned).ToList();
             ListAllDrivers(assignedDrivers);
-            Driver driver = DBServices<Driver>.ReturnEntity(assignedDrivers);
+            Driver driver = DBServices<Driver>.ReturnEntityById(assignedDrivers);
             driver.Shift = Shift.NotAssigned;
             driver.Car = null;
             Console.Clear();
@@ -52,7 +52,7 @@ namespace Services
             Console.WriteLine("Unassigned Drivers:");
             List<Driver> unassignedDrivers = EntitiesDB.drivers.Where(driver => driver.Shift == Shift.NotAssigned).ToList();
             ListAllDrivers(unassignedDrivers);
-            Driver driver = DBServices<Driver>.ReturnEntity(unassignedDrivers);
+            Driver driver = DBServices<Driver>.ReturnEntityById(unassignedDrivers);
             Shift shift = ReturnShift();
 
             //get the assigned cars first and then create a list for all the cars that aren't in the first list
@@ -65,7 +65,7 @@ namespace Services
 
             ListAllDrivers(availableCars);
 
-            driver.Car = DBServices<Car>.ReturnEntity(availableCars);
+            driver.Car = DBServices<Car>.ReturnEntityById(availableCars);
             Console.Clear();
             Console.WriteLine(driver.PrintInfo());
         }
@@ -73,8 +73,21 @@ namespace Services
         public static Shift ReturnShift()
         {
             Console.Clear();
-            Console.WriteLine("Choose shift: ");
-            return (Shift)HelperMethods.ReturnEnum(EntitiesDB.shifts);
+            while (true)
+            {
+                try
+                {
+                    
+                    Console.WriteLine("Choose shift: ");
+                    return (Shift)HelperMethods.ReturnEnum(EntitiesDB.shifts);
+                }
+                catch (ExceptionService msg)
+                {
+                    Console.WriteLine(msg.Error);
+                    continue;
+                }
+            }
+            
         }
     }
 }

@@ -12,21 +12,44 @@ namespace Services
         public static Role ReturnRole()
         {
             Console.Clear();
-            Console.WriteLine("Choose role: ");
-            return (Role)HelperMethods.ReturnEnum(EntitiesDB.roles);
+            while (true)
+            {
+                try
+                {
+                    Console.Clear();
+                    Console.WriteLine("Choose role: ");
+                    return (Role)HelperMethods.ReturnEnum(EntitiesDB.roles);
+                }
+                catch (ExceptionService msg)
+                {
+                    Console.WriteLine(msg.Error);
+                }
+            }
+           
         }
         public void AddNewUser(ReturnPassword returnPassword, ReturnUsername returnUsername)
         {
-             
-            string username = returnUsername();
-            string? password = returnPassword();
+            while (true)
+            {
+                try
+                {
+                    string? username = returnUsername();
+                    string? password = returnPassword();
 
-            Role role = ReturnRole();
-            int id = HelperMethods.ReturnId(EntitiesDB.users);
-               
-            User newUser = new User(id, username, password, role);
-            DBServices<User>.Add(EntitiesDB.users, newUser);
-            Console.WriteLine($"Successful creation of {newUser.Role} user!", HelperMethods.ChangeColor(ConsoleColor.Green));
+                    Role role = ReturnRole();
+                    int id = HelperMethods.ReturnId(EntitiesDB.users);
+
+                    User newUser = new User(id, username, password, role);
+                    DBServices<User>.Add(EntitiesDB.users, newUser);
+                    Console.WriteLine($"Successful creation of {newUser.Role} user!", HelperMethods.ChangeColor(ConsoleColor.Green));
+                    break;
+                }
+                catch (ExceptionService msg)
+                {
+                    Console.WriteLine(msg.Error);
+                    continue;
+                }
+            }
 
         }
 
@@ -36,25 +59,16 @@ namespace Services
             {
                 try
                 {
-                    Console.WriteLine("Enter username", HelperMethods.ChangeColor(ConsoleColor.White));
-                    string? username = Console.ReadLine();
-                    Console.WriteLine("Enter password");
-                    string? password = Console.ReadLine();
-                    User? user = EntitiesDB.users.SingleOrDefault(user => user.Username == username && user.CheckPassword(password));
-                    if (user == null)
-                    {
-                        throw new ExceptionService($"User entered wrong username or password. Entered message: username - {username}, password - {password}");
-                    }
-                    else
-                    {
-                        HelperMethods.ChangeColor(ConsoleColor.Green);
-                        Console.WriteLine($"Successful Login! Welcome {user.Role} {user.Username}");
-                        return user;
-                    }
+                    User user = DBServices<User>.ReturnUser();
+                    Console.Clear();
+                    Console.WriteLine($"Successful Login! Welcome {user.Role} {user.Username}", HelperMethods.ChangeColor(ConsoleColor.Green));
+                    Console.ResetColor();
+                    return user;
                 }
-                catch (Exception)
+                catch (ExceptionService msg)
                 {
-                    Console.WriteLine("Login unsuccessful. Please try again", HelperMethods.ChangeColor(ConsoleColor.Red));
+                    Console.WriteLine($"{msg.Error}", HelperMethods.ChangeColor(ConsoleColor.Red));
+                    Console.ResetColor();
                     continue;
                 }
             }
@@ -63,15 +77,16 @@ namespace Services
 
         public void RemoveUser(int id)
         {
+            PrintUsers(EntitiesDB.users);
             while (true)
             {
                 try
                 {
-                    PrintUsers(EntitiesDB.users);
-                    User user = DBServices<User>.ReturnEntity(EntitiesDB.users);
+                    User user = DBServices<User>.ReturnEntityById(EntitiesDB.users);
                     if (user.Id == id)
                     {
-                        throw new ExceptionService("User entered invalid Id");
+                        Console.WriteLine("You can't do that");
+                        continue;
                     }
                     else
                     {
@@ -81,9 +96,9 @@ namespace Services
                     }
                     break;
                 }
-                catch (ExceptionService)
+                catch (ExceptionService msg)
                 {
-                    Console.WriteLine("You can't do that!");
+                    Console.WriteLine(msg.Error);
                     continue;
                 }
             }
