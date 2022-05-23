@@ -6,7 +6,7 @@ namespace Models
         public string Model { get; set; }
         public string LicensePlate { get; set; }
         public DateTime LicensePlateExpieryDate { get; set; }
-        public List<Driver> AssignedDrivers = new List<Driver>();
+        public List<int> AssignedDrivers = new List<int>();
 
         public Car(int id, string model, string licensePlate, DateTime expiaryDate) : base(id)
         {

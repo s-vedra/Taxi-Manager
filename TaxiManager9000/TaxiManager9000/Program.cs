@@ -7,8 +7,11 @@ IUserService userService = new UserService();
 IManagerService managerService = new ManagerService();
 IMaintenanceService maintenanceService = new MaintenanceService();
 
+
 managerService.AssignCarsToDrivers();
 maintenanceService.AssignedDrivers();
+FileSystem DB = new FileSystem();
+//FileSystemDB seedEntities = new FileSystemDB();
 
 Console.WriteLine("Taxi Manager 9000");
 User user = userService.Login();
@@ -29,7 +32,6 @@ while (true)
                         HelperMethods.MainMenu();
                         continue;
                     case 2:
-                        Console.Clear();
                         Console.Clear();
                         userService.RemoveUser(user.Id);
                         HelperMethods.MainMenu();

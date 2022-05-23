@@ -10,29 +10,29 @@ namespace Services
         //assigning the cars to the drivers by ID
         public void AssignCarsToDrivers()
         {
-            DBServices<Driver>.AssignEntity(1, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(1, EntitiesDB.cars);
-            DBServices<Driver>.AssignEntity(2, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(1, EntitiesDB.cars);
-            DBServices<Driver>.AssignEntity(3, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(2, EntitiesDB.cars);
-            DBServices<Driver>.AssignEntity(4, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(3, EntitiesDB.cars);
-            DBServices<Driver>.AssignEntity(5, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(3, EntitiesDB.cars);
-            DBServices<Driver>.AssignEntity(6, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(2, EntitiesDB.cars);
-            DBServices<Driver>.AssignEntity(7, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(5, EntitiesDB.cars);
-            DBServices<Driver>.AssignEntity(8, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(3, EntitiesDB.cars);
-            DBServices<Driver>.AssignEntity(9, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(5, EntitiesDB.cars);
-            DBServices<Driver>.AssignEntity(10, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(6, EntitiesDB.cars);
-            DBServices<Driver>.AssignEntity(11, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(1, EntitiesDB.cars);
-            DBServices<Driver>.AssignEntity(12, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(4, EntitiesDB.cars);
+            DBServices<Driver>.AssignEntity(1, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(1, EntitiesDB.cars).Id;
+            DBServices<Driver>.AssignEntity(2, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(1, EntitiesDB.cars).Id;
+            DBServices<Driver>.AssignEntity(3, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(2, EntitiesDB.cars).Id;
+            DBServices<Driver>.AssignEntity(4, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(3, EntitiesDB.cars).Id;
+            DBServices<Driver>.AssignEntity(5, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(3, EntitiesDB.cars).Id;
+            DBServices<Driver>.AssignEntity(6, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(2, EntitiesDB.cars).Id;
+            DBServices<Driver>.AssignEntity(7, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(5, EntitiesDB.cars).Id;
+            DBServices<Driver>.AssignEntity(8, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(3, EntitiesDB.cars).Id;
+            DBServices<Driver>.AssignEntity(9, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(5, EntitiesDB.cars).Id;
+            DBServices<Driver>.AssignEntity(10, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(6, EntitiesDB.cars).Id;
+            DBServices<Driver>.AssignEntity(11, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(1, EntitiesDB.cars).Id;
+            DBServices<Driver>.AssignEntity(12, EntitiesDB.drivers).Car = DBServices<Car>.AssignEntity(4, EntitiesDB.cars).Id;
         }
 
         public void ListAllDrivers<T>(List<T> drivers) where T : BaseEntity
         {
-            DBServices<T>.PrintEntities(drivers, (drivers) => drivers.ForEach(driver => Console.WriteLine(driver.PrintInfo(), HelperMethods.ChangeColor(ConsoleColor.White))));
+            FileSystemDB<T>.PrintEntities(drivers, (drivers) => drivers.ForEach(driver => Console.WriteLine(driver.PrintInfo(), HelperMethods.ChangeColor(ConsoleColor.White))));
         }
 
 
         public void PrintTaxiLicenseStatus()
         {
-            EntitiesDB.drivers.ForEach(driver => Console.WriteLine(driver.PrintLicenseStatus()));
+            FileSystemDB<Driver>.DeserializeEntities()?.ForEach(driver => Console.WriteLine(driver.PrintLicenseStatus()));
         }
 
         public void UnassignDriver()
@@ -40,11 +40,18 @@ namespace Services
             Console.WriteLine("Assigned Drivers:");
             List<Driver> assignedDrivers = EntitiesDB.drivers.Where(driver => driver.Shift != Shift.NotAssigned).ToList();
             ListAllDrivers(assignedDrivers);
-            Driver driver = DBServices<Driver>.ReturnEntityById(assignedDrivers);
+            Driver driver = HelperMethods.ReturnEntity(assignedDrivers);
             driver.Shift = Shift.NotAssigned;
             driver.Car = null;
             Console.Clear();
-            Console.WriteLine($"{driver.PrintInfo()}");
+            FileSystemDB<Driver>.PrintEntity(driver);
+        }
+
+        private List<Car> ReturnAvailableCars(Shift shift)
+        {
+            List<Car> assignedCars = FileSystemDB<Car>.DeserializeEntities().Where(car => car.AssignedDrivers
+            .Where(driver => FileSystemDB<Driver>.ReturnEntityById(driver, FileSystemDB<Driver>.DeserializeEntities()).Shift == shift).ToList().Count() > 0).ToList();
+            return FileSystemDB<Car>.DeserializeEntities().Except(assignedCars).Where(car => car.ReturnLicense() != "Expired").ToList();
         }
 
         public void AssignDriver()
@@ -52,22 +59,18 @@ namespace Services
             Console.WriteLine("Unassigned Drivers:");
             List<Driver> unassignedDrivers = EntitiesDB.drivers.Where(driver => driver.Shift == Shift.NotAssigned).ToList();
             ListAllDrivers(unassignedDrivers);
-            Driver driver = DBServices<Driver>.ReturnEntityById(unassignedDrivers);
+            Driver driver = HelperMethods.ReturnEntity(unassignedDrivers);
             Shift shift = ReturnShift();
-
-            //get the assigned cars first and then create a list for all the cars that aren't in the first list
-            List<Car> assignedCars = EntitiesDB.cars.Where(car => car.AssignedDrivers.Where(driver => driver.Shift == shift).ToList().Count > 0).ToList();
-            List<Car> availableCars = EntitiesDB.cars.Except(assignedCars).Where(car => car.ReturnLicense() != "Expired").ToList();
-
+            List<Car> availableCars = ReturnAvailableCars(shift);
             driver.Shift = shift;
             Console.Clear();
             Console.WriteLine($"Available cars for {shift} shift");
-
             ListAllDrivers(availableCars);
-
-            driver.Car = DBServices<Car>.ReturnEntityById(availableCars);
+            Console.WriteLine("Enter id: ");
+            int? id = Console.ReadLine().Parsing();
+            driver.Car = FileSystemDB<Car>.ReturnEntityById(id, availableCars).Id;
             Console.Clear();
-            Console.WriteLine(driver.PrintInfo());
+            FileSystemDB<Driver>.PrintEntity(driver);
         }
 
         public static Shift ReturnShift()
@@ -77,7 +80,7 @@ namespace Services
             {
                 try
                 {
-                    
+
                     Console.WriteLine("Choose shift: ");
                     return (Shift)HelperMethods.ReturnEnum(EntitiesDB.shifts);
                 }
@@ -87,7 +90,7 @@ namespace Services
                     continue;
                 }
             }
-            
+
         }
     }
 }

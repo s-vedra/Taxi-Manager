@@ -9,7 +9,7 @@ namespace Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public Shift Shift { get; set; }
-        public Car Car { get; set; }
+        public int? Car { get; set; }
         public string License { get; set; }
         public DateTime LicenseExpieryDate { get; set; }
 
@@ -52,7 +52,7 @@ namespace Models
                 return $"{Id} {FirstName} {LastName} Shift: {Regex.Replace(Shift.ToString(), "(?<=[a-z])([A-Z])", " $1", RegexOptions.Compiled)} Car: No assigned Car";
             }
         
-            return $"{Id} {FirstName} {LastName} Shift: {Shift} Car: {Car.Model}";
+            return $"{Id} {FirstName} {LastName} Shift: {Shift} Car: {EntitiesDB.cars.Single(car => car.Id == Car).Model}";
         }
         public string PrintLicenseStatus()
         {

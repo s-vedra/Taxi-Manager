@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Services
 {
-    public class LoggingService : ILoggingService
+    public class LoggingService
     {
         private string _errorFolderPath = @"..\..\..\Errors";
         private string _errorFilePath = $@"\logs{DateTime.Today.Date.ToString("dd-MM-yyyy")}.log";

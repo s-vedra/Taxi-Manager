@@ -98,6 +98,41 @@ namespace Services
             Console.Clear();
         }
 
+        public static User ReturnUser()
+        {
+            Console.WriteLine("Enter username: ");
+            string? username = Console.ReadLine();
+            Console.WriteLine("Enter password: ");
+            string? password = Console.ReadLine();
+            User? user = EntitiesDB.users.SingleOrDefault(user => user.Username == username && user.CheckPassword(password));
+            if (user == null)
+            {
+                throw new ExceptionService($"Login unsuccessful. Please try again");
+            }
+            else
+            {
+                return user;
+            }
+        }
+        public static T ReturnEntity<T>(List<T> data) where T : BaseEntity
+        {
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Enter ID: ");
+                    int? index = Console.ReadLine().Parsing();
+                    T entity = FileSystemDB<T>.ReturnEntityById(index, data);
+                    return entity;
+                }
+                catch (ExceptionService msg)
+                {
+                    Console.WriteLine(msg.Message);
+                    continue;
+                }
+            }
+
+        }
     }
 
 }
